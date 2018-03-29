@@ -14,13 +14,15 @@ API of [CoinMarketCap](https://coinmarketcap.com/api/ "CoinMarketCap") is used
 
 #### Use:
 
-For recive actual price of a crypto coin send a command "/p coin", you can send a coin name and also a coin ticker, e.g.:
+To recive actual price of a crypto coin send a command "/p coin", you can send a coin name and also a coin ticker, you can get global market cap info with a command "/cap" e.g.:
 
-> VeChain
+> /p VeChain
 > 
-> OMG
+> /p OMG
 > 
-> DigixDAO
+> /p neo
+>
+> /cap
 
 ---
 
