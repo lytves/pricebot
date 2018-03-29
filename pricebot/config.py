@@ -3,7 +3,7 @@ import os
 # the token of your bot
 TOKEN_BOT = '...'
 
-TIME_INTERVAL = 300
+TIME_INTERVAL = 30
 
 URL_COINMARKET_SIMPLE_API = "https://api.coinmarketcap.com/v1/ticker/{}"
 
