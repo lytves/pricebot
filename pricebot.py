@@ -1,7 +1,7 @@
 from telegram.ext import Updater
 from telegram.ext import CommandHandler
 
-from pricebot.handlers import price, error, download_api_coinslists_handler
+from pricebot.handlers import price, cap, error, download_api_coinslists_handler, download_api_global_handler
 from pricebot.config import TOKEN_BOT, TIME_INTERVAL
 
 from pricebot.parse_apis import module_logger
@@ -18,20 +18,23 @@ def main():
     dispatcher.add_error_handler(error)
 
     # bot's command handlers
-    start_handler = CommandHandler('p', price, pass_args=True)
-    dispatcher.add_handler(start_handler)
+    price_handler = CommandHandler('p', price, pass_args=True)
+    dispatcher.add_handler(price_handler)
+
+    cap_handler = CommandHandler('cap', cap)
+    dispatcher.add_handler(cap_handler)
 
     # here put the job for the bot
     job_queue = updater.job_queue
-    job_queue.run_repeating(download_api_coinslists_handler, TIME_INTERVAL, 5, context='coinmarketcap')
+    job_queue.run_repeating(download_api_coinslists_handler, TIME_INTERVAL, 10, context='coinmarketcap')
+    job_queue.run_repeating(download_api_global_handler, TIME_INTERVAL, 5)
 
     # for use start_polling() updates method
     updater.start_polling()
 
     # for use start_webhook updates method,
     # see https://github.com/python-telegram-bot/python-telegram-bot/wiki/Webhooks
-    
-    # updater.start_webhook(listen='127.0.0.1', port=5002, url_path=TOKEN_BOT)
+    # updater.start_webhook(listen='127.0.0.1', port=5006, url_path=TOKEN_BOT)
     # updater.bot.set_webhook(url='https://0.0.0.0/' + TOKEN_BOT,
     #                   certificate=open('/etc/nginx/PUBLIC.pem', 'rb'))
 

@@ -29,7 +29,7 @@ module_logger.setLevel(logging.INFO)
 
 def parse_api_coinmarketcapjson(message_ticker):
     """
-    the function to download API from the agregators sites to local file
+    the function to parse JSON file for a request ticker
 
     :param  message_ticker: a message with a ticker from user's request
     :type   message_ticker: str
@@ -138,6 +138,26 @@ def parse_api_coinmarketcapjson(message_ticker):
     return '💲 *CoinMarketCap*' + msg_parse_api
 
 
+def parse_api_globalinfoapijson():
+    """
+    the function to parse global API info
+    """
+
+    coinmarketcapjson = jsonfiles.globalinfoapijson
+
+    marketcap = coinmarketcapjson['total_market_cap_usd']
+    vol24h = coinmarketcapjson['total_24h_volume_usd']
+    btc_dominance = coinmarketcapjson['bitcoin_percentage_of_market_cap']
+
+    # text = ":chart_with_upwards_trend: *CoinMarketCap Info*" \
+    text = emojize(':chart_with_upwards_trend: *CoinMarketCap Info*' \
+           + '\nMarket Cap: *$' + sep(marketcap) + '*' \
+           + '\n24h Vol: *$' + sep(vol24h) + '*' \
+           + '\nBTC Dominance: *{}'.format(btc_dominance) + '%*', use_aliases=True)
+
+    return text
+
+
 # compare percent and add an emoji adequate
 def parse_price_change(percent):
     emoji = ''
@@ -183,3 +203,11 @@ def error_ticker():
     error_text = '\n🇷🇺️ Нет данных по этому тикеру' \
                  '\n🇬🇧 There is no data for this ticker\n'
     return error_text
+
+
+# the short function for format number
+def sep(s, thou=".", dec=","):
+    integer, decimal = str(s).split(".")
+    integer = re.sub(r"\B(?=(?:\d{3})+$)", thou, integer)
+    # return integer + dec + decimal
+    return integer
