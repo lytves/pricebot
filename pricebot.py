@@ -24,13 +24,18 @@ def main():
     cap_handler = CommandHandler('cap', cap)
     dispatcher.add_handler(cap_handler)
 
-    # here put the job for the bot
+    #
+    # *** here put the job for the bot ***
+    #
+    # add tasks to parse CoinMarketCap API to local JSON-files, is used time interval, coz
+    # APIs (CMC) have pricing plans with limits
     job_queue = updater.job_queue
-    job_queue.run_repeating(download_api_coinslists_handler, TIME_INTERVAL, 10, context='coinmarketcap')
     job_queue.run_repeating(download_api_global_handler, TIME_INTERVAL, 5)
+    job_queue.run_repeating(download_api_coinslists_handler, TIME_INTERVAL, 10, context='coinmarketcap')
 
     # for use start_polling() updates method
     updater.start_polling()
+    updater.idle()
 
     # for use start_webhook updates method,
     # see https://github.com/python-telegram-bot/python-telegram-bot/wiki/Webhooks

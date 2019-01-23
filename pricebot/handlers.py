@@ -114,7 +114,7 @@ def download_api_coinslists_handler(bot, job):
 
     module_logger.info('Start a request to %s API', job.context)
 
-    response = requests.get(COINMARKET_API_URL_COINSLIST)
+    response = requests.get(COINMARKET_API_URL_COINLIST.format(CMC_API_KEY))
 
     # extract a json from response to a class 'dict' or 'list'
     response_dict_list = response.json()
@@ -122,9 +122,9 @@ def download_api_coinslists_handler(bot, job):
     if response.status_code == requests.codes.ok:
 
         # check if one of the APIs response is an error
-        if ('error' in response_dict_list) or (('Response' in response_dict_list) and (response_dict_list['Response'] is 'Error')):
+        if 'status' in response_dict_list and response_dict_list['status']['error_code'] != 0:
 
-            error_msg = response_dict_list['error']
+            error_msg = response_dict_list['status']['error_message']
             module_logger.error('%s error message: %s' % (job.context, error_msg))
 
         else:
@@ -136,10 +136,10 @@ def download_api_coinslists_handler(bot, job):
 
             # save a json to variable
             if job.context == 'coinmarketcap':
-                jsonfiles.change_coinmarketcapjson(response_dict_list)
+                jsonfiles.update_cmc_json(response_dict_list)
 
     else:
-        module_logger.error('%s not response successfully', job.context)
+        module_logger.error('%s API has not been response successfully', job.context)
 
 
 # job queue to download CoinMarket API Global Data
@@ -170,7 +170,7 @@ def download_api_global_handler(bot, job):
             json.dump(response_dict_list, outfile)
             module_logger.info('Success save it to %s', FILE_JSON_GLOBALINFOAPI)
 
-        jsonfiles.change_globalinfoapijson_json(response_dict_list)
+        jsonfiles.update_globalcmc_json(response_dict_list)
 
     else:
         module_logger.error('CoinMarketCap JSON API /global not responses successfully')
