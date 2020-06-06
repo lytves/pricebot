@@ -8,14 +8,13 @@ from emoji import emojize
 
 from pricebot.config import *
 
-locale.setlocale(locale.LC_NUMERIC, 'en_GB')
-
 # start logging - print it to console for test cases
 # logging.basicConfig(level=logging.INFO,
-#                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+#                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 # module_logger = logging.getLogger(__name__)
 
-# start logging to the file with log rotation at midnight
+
+# # start logging to the file with log rotation at midnight
 formatter = logging.Formatter('%(asctime)s %(name)s %(levelname)s %(message)s')
 handler = TimedRotatingFileHandler(os.path.dirname(os.path.realpath(__file__)) + '/../pricebot.log',
                                    when='midnight',
@@ -24,7 +23,17 @@ handler.setFormatter(formatter)
 module_logger = logging.getLogger(__name__)
 module_logger.addHandler(handler)
 module_logger.setLevel(logging.INFO)
-# end of log section
+# # end of log section
+
+try:
+    locale.setlocale(locale.LC_NUMERIC, 'es_ES.utf8')
+except Exception as e:
+    if hasattr(e, 'message'):
+        ex_msg = e.message
+    else:
+        ex_msg = e
+
+    module_logger.error('locale.setlocale EXCEPTION %s', ex_msg)
 
 
 def parse_api_coinmarketcapjson(message_ticker):
@@ -44,15 +53,14 @@ def parse_api_coinmarketcapjson(message_ticker):
     # are reading coinslist from a local json file (maybe earlier downloaded manually)
     #
     # if os.path.isfile(FILE_JSON_COINMARKET):
-    #     # Read configuration
-    #     with open(FILE_JSON_COINMARKET) as coinmarketcapjson:
-    #         try:
-    #             import json
-    #             coinmarketcapjson = json.load(coinmarketcapjson)
-    #         except:
-    #             module_logger.error('api.coinmarketcap.com! bad json file to read: %s', coinmarketcapjson)
-    #             msg_parse_api += error_information()
-
+    #     Read configuration
+        # with open(FILE_JSON_COINMARKET) as coinmarketcapjson:
+        #     try:
+        #         import json
+        #         coinmarketcapjson = json.load(coinmarketcapjson)
+        #     except:
+        #         module_logger.error('api.coinmarketcap.com! bad json file to read: %s', coinmarketcapjson)
+        #         msg_parse_api += error_information()
 
     if not coinmarketcapjson:
 
@@ -143,16 +151,39 @@ def parse_api_globalinfoapijson():
     the function to parse global API info
     """
 
-    coinmarketcapjson = jsonfiles.globalinfoapijson
+    globalinfoapijson = jsonfiles.globalinfoapijson
 
-    marketcap = coinmarketcapjson['total_market_cap_usd']
-    vol24h = coinmarketcapjson['total_24h_volume_usd']
-    btc_dominance = coinmarketcapjson['bitcoin_percentage_of_market_cap']
+    text, msg_parse_api = '', ''
 
-    # text = ":chart_with_upwards_trend: *CoinMarketCap Info*" \
-    text = emojize(':chart_with_upwards_trend: *CoinMarketCap Info*' \
-                   + '\nMarket Cap: *$' + sep(marketcap) + '*' \
-                   + '\n24h Vol: *$' + sep(vol24h) + '*' \
+    # temporaly version: when we don't use downloaded API file, but
+    # are reading coinslist from a local json file (maybe earlier downloaded manually)
+    #
+    # if os.path.isfile(FILE_JSON_GLOBALINFOAPI):
+        # Read configuration
+        # with open(FILE_JSON_GLOBALINFOAPI) as globalinfoapijson:
+        #     try:
+        #         import json
+        #         globalinfoapijson = json.load(globalinfoapijson)
+        #     except:
+        #         module_logger.error('api.coinmarketcap.com! bad json file to read: %s', globalinfoapijson)
+        #         msg_parse_api += error_information()
+
+    if not globalinfoapijson:
+
+        module_logger.error('api.coinmarketcap.com! Error message: there is no globalinfoapijson json file')
+        msg_parse_api += error_information()
+
+        # TODO send a message to the admin (a chat, a group, a channel)
+
+    elif globalinfoapijson:
+
+        marketcap = globalinfoapijson['data']['quote']['USD']['total_market_cap']
+        vol24h = globalinfoapijson['data']['quote']['USD']['total_volume_24h']
+        btc_dominance = globalinfoapijson['data']['btc_dominance']
+
+        text = emojize(':chart_with_upwards_trend: *CoinMarketCap Info*'
+                   + '\nMarket Cap: *$' + sep(marketcap) + '*'
+                   + '\n24h Vol: *$' + sep(vol24h) + '*'
                    + '\nBTC Dominance: *{}'.format(btc_dominance) + '%*', use_aliases=True)
 
     return text

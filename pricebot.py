@@ -11,14 +11,14 @@ def main():
     module_logger.info("Start the pricebot!")
 
     # create an object "bot"
-    updater = Updater(token=TOKEN_BOT)
+    updater = Updater(token=TOKEN_BOT, use_context=True)
     dispatcher = updater.dispatcher
 
     # bot's error handler
     dispatcher.add_error_handler(error)
 
     # bot's command handlers
-    price_handler = CommandHandler('p', price, pass_args=True)
+    price_handler = CommandHandler('p', price)
     dispatcher.add_handler(price_handler)
 
     cap_handler = CommandHandler('cap', cap)
