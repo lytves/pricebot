@@ -6,12 +6,10 @@ TOKEN_BOT = 'put_your_here'
 # do APIs requests with pause
 TIME_INTERVAL = 3600
 
-# old CoinMarketCap public API
-# COINMARKET_API_URL_COINSLIST = 'https://api.coinmarketcap.com/v1/ticker/?limit=0'
-COINMARKET_API_URL_GLOBAL = 'https://api.coinmarketcap.com/v1/global/'
-
-# new pro API
+# new pro API CoinMarketCap Key
 CMC_API_KEY = "put_your_here"
+COINMARKET_API_URL_GLOBAL = 'https://pro-api.coinmarketcap.com/v1/global-metrics/quotes/latest' \
+                            '?CMC_PRO_API_KEY={}'
 COINMARKET_API_URL_COINLIST = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?start=1&limit=5000' \
                               '&CMC_PRO_API_KEY={}'
 
